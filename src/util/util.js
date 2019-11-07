@@ -31,14 +31,24 @@ Utility = (function() {
     var cipher, crypted, salt;
     salt = this.random(1000, 9999);
     text = salt + '|' + text + '|' + Date.now();
-    cipher = crypto.createCipher('aes-256-ctr', password);
+    // createCipher function deprecated since: v10.0.0
+    if (greater(process.version, "v10.0.0") || process.version === "v10.0.0") {
+      cipher = crypto.createCipheriv('aes-256-ctr', password, Config.AUTH_COOKIE_IV);
+    } else {
+      cipher = crypto.createCipher('aes-256-ctr', password);
+    }
     crypted = cipher.update(text, 'utf8', 'hex');
     return crypted += cipher.final('hex');
   };
 
   Utility.decryptText = function(text, password) {
     var dec, decipher, strs;
-    decipher = crypto.createDecipher('aes-256-ctr', password);
+    // createDecipher function deprecated since: v10.0.0
+    if (greater(process.version, "v10.0.0") || process.version === "v10.0.0") {
+      decipher = crypto.createDecipheriv('aes-256-ctr', password, Config.AUTH_COOKIE_IV);
+    } else {
+      decipher = crypto.createDecipher('aes-256-ctr', password);
+    }
     dec = decipher.update(text, 'hex', 'utf8');
     dec += decipher.final('utf8');
     strs = dec.split('|');
@@ -304,6 +314,23 @@ var addUpdateTimeToList = function (list, options) {
 
 var parse = function (obj) {
   return JSON.parse(JSON.stringify(obj));
+};
+
+var versionToNumber = function (version) {
+  return version.match(/\d+(\d+)?/g);
+};
+
+var greater = function (version, reference) {
+  let versionNumbers = versionToNumber(version);
+  let referenceNumbers = versionToNumber(reference);
+  let count = versionNumbers.length <= referenceNumbers.length ? versionNumbers.length : referenceNumbers.length;
+  for (let i = 0; i < count; i ++) {
+    if (versionNumbers[i] === referenceNumbers[i]) {
+      continue;
+    }
+
+    return versionNumbers[i] > referenceNumbers[i];
+  }
 };
 
 module.exports = {
