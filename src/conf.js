@@ -3,6 +3,8 @@ module.exports = {
   AUTH_COOKIE_NAME: '<-- 此处设置 Cookie 名称 -->',
   // 认证 Cookie 加密密钥，请自行定义，任意字母数字组合
   AUTH_COOKIE_KEY: '<-- 此处设置 Cookie 加密密钥 -->',
+  // IV is an initialization vector
+  AUTH_COOKIE_IV: 'FnJL7EDzjqWjcaY9',
   // 认证 Cookie 过期时间，单位为毫秒，2592000000 毫秒 = 30 天
   AUTH_COOKIE_MAX_AGE: 2592000000,
   // 融云颁发的 App Key，请访问融云开发者后台：https://developer.rongcloud.cn
